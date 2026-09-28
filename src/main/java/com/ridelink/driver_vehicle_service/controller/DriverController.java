@@ -12,7 +12,13 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import com.ridelink.driver_vehicle_service.dto.EligibleDriverCriteria;
+import com.ridelink.driver_vehicle_service.dto.EligibleDriverResponse;
+import com.ridelink.driver_vehicle_service.model.VehicleType;
+import com.ridelink.driver_vehicle_service.service.EligibleDriverService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/drivers")
@@ -20,11 +26,32 @@ import org.springframework.web.bind.annotation.*;
 public class DriverController {
 
     private final DriverService driverService;
+    private final EligibleDriverService eligibleDriverService;
 
     @PostMapping
     public ResponseEntity<DriverResponse> createDriver(@Valid @RequestBody CreateDriverRequest request) {
         DriverResponse response = driverService.createDriver(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/eligible")
+    public ResponseEntity<List<EligibleDriverResponse>> getEligibleDrivers(
+            @RequestParam(required = false) Double latitude,
+            @RequestParam(required = false) Double longitude,
+            @RequestParam(required = false, defaultValue = "10.0") Double radius,
+            @RequestParam(required = false) String serviceArea,
+            @RequestParam(required = false) VehicleType vehicleType,
+            @RequestParam(required = false) Integer minCapacity) {
+        EligibleDriverCriteria criteria = EligibleDriverCriteria.builder()
+                .latitude(latitude)
+                .longitude(longitude)
+                .radiusKm(radius)
+                .serviceArea(serviceArea)
+                .vehicleType(vehicleType)
+                .minCapacity(minCapacity)
+                .build();
+        List<EligibleDriverResponse> eligibleDrivers = eligibleDriverService.findEligibleDrivers(criteria);
+        return ResponseEntity.ok(eligibleDrivers);
     }
 
     @GetMapping("/{driverId}")
