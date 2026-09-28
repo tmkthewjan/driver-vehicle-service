@@ -2,7 +2,9 @@ package com.ridelink.driver_vehicle_service.controller;
 
 import com.ridelink.driver_vehicle_service.dto.CreateDriverRequest;
 import com.ridelink.driver_vehicle_service.dto.DriverResponse;
+import com.ridelink.driver_vehicle_service.dto.UpdateAvailabilityRequest;
 import com.ridelink.driver_vehicle_service.dto.UpdateDriverRequest;
+import com.ridelink.driver_vehicle_service.dto.UpdateDriverStatusRequest;
 import com.ridelink.driver_vehicle_service.service.DriverService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +42,22 @@ public class DriverController {
             @PathVariable String driverId,
             @Valid @RequestBody UpdateDriverRequest request) {
         DriverResponse response = driverService.updateDriver(driverId, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{driverId}/status")
+    public ResponseEntity<DriverResponse> updateDriverStatus(
+            @PathVariable String driverId,
+            @Valid @RequestBody UpdateDriverStatusRequest request) {
+        DriverResponse response = driverService.updateDriverStatus(driverId, request.getStatus());
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{driverId}/availability")
+    public ResponseEntity<DriverResponse> updateAvailability(
+            @PathVariable String driverId,
+            @Valid @RequestBody UpdateAvailabilityRequest request) {
+        DriverResponse response = driverService.updateAvailability(driverId, request.getAvailabilityStatus());
         return ResponseEntity.ok(response);
     }
 }
