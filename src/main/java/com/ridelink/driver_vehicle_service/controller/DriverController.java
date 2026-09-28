@@ -5,6 +5,8 @@ import com.ridelink.driver_vehicle_service.dto.DriverResponse;
 import com.ridelink.driver_vehicle_service.dto.UpdateAvailabilityRequest;
 import com.ridelink.driver_vehicle_service.dto.UpdateDriverRequest;
 import com.ridelink.driver_vehicle_service.dto.UpdateDriverStatusRequest;
+import com.ridelink.driver_vehicle_service.dto.UpdateLocationRequest;
+import com.ridelink.driver_vehicle_service.dto.UpdateServiceAreaRequest;
 import com.ridelink.driver_vehicle_service.service.DriverService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +60,22 @@ public class DriverController {
             @PathVariable String driverId,
             @Valid @RequestBody UpdateAvailabilityRequest request) {
         DriverResponse response = driverService.updateAvailability(driverId, request.getAvailabilityStatus());
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{driverId}/location")
+    public ResponseEntity<DriverResponse> updateLocation(
+            @PathVariable String driverId,
+            @Valid @RequestBody UpdateLocationRequest request) {
+        DriverResponse response = driverService.updateLocation(driverId, request.getLatitude(), request.getLongitude());
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{driverId}/service-area")
+    public ResponseEntity<DriverResponse> updateServiceArea(
+            @PathVariable String driverId,
+            @Valid @RequestBody UpdateServiceAreaRequest request) {
+        DriverResponse response = driverService.updateServiceArea(driverId, request.getServiceArea());
         return ResponseEntity.ok(response);
     }
 }
